@@ -27,6 +27,22 @@ export const findUserByDate = async (id, date) => {
   });
 };
 
+export const findAllUserByDate = async date => {
+  return await User.findAll({
+    where: {
+      date,
+    },
+  });
+};
+
+export const findAllUserPlayTimeByDate = async date => {
+  return await User.findAll({
+    where: {
+      date,
+    },
+  });
+};
+
 //update
 export const updateUserPlayTime = async (id, playTime) => {
   return await User.update(

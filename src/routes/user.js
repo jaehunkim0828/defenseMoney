@@ -7,7 +7,7 @@ userRouter.route("/").post(async (req, res, next) => {
   // uuid있는지 체크 create
   const { id } = req.body;
   const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  today.setTime(today.getTime() + 9 * 60 * 60 * 1000);
   const formattedToday = today.toISOString().split("T")[0];
   const isPlayonToday = await controller.findUserByDate(id, formattedToday);
   if (isPlayonToday) {
@@ -30,7 +30,7 @@ userRouter.route("/").post(async (req, res, next) => {
 userRouter.route("/playTime").post(async (req, res, next) => {
   const { id, playTime } = req.body;
   const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  today.setTime(today.getTime() + 9 * 60 * 60 * 1000);
   const formattedToday = today.toISOString().split("T")[0];
   const isPlayonToday = await controller.findUserByDate(id, formattedToday);
   if (isPlayonToday) {
@@ -46,5 +46,20 @@ userRouter.route("/playTime").post(async (req, res, next) => {
       msg: "update 실패",
     });
   }
+});
+
+userRouter.route("/today/play_time/:date").get(async (req, res, next) => {
+  const { date } = req.params;
+  const users = await controller.findAllUserPlayTimeByDate(date);
+  const allTime = users.reduce((prev, cur) => prev + cur.playTime, 0);
+  console.log(allTime);
+  res.send(`${date}에 한명당 평균 플레이 시간: ${allTime / users.length}초`);
+});
+
+userRouter.route("/today/count/:date").get(async (req, res, next) => {
+  const { date } = req.params;
+  console.log(date);
+  const users = await controller.findAllUserByDate(date);
+  res.send(`${date} 플레이 명수: ${users.length}`);
 });
 export default userRouter;
